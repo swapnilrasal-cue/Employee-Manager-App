@@ -1,19 +1,14 @@
-// export interface User{
-//     email: string;
-//     password: string;
-//     name: string;
-//     gender :string;
-//     date :Date;
-//     status: string;
-// }
+import { Role } from './role.model';
+
 export class User {
     constructor(
-        public email: string,
-        public password: string,
         public name: string,
-        public gender: string,
-        public date : Date,
+        public email: string,
         public status: string,
+        public role: Role,
+        public password: string,
+        public date : Date,
+        public gender: string,
         public loginStatus: boolean = false
     ) { }
 
@@ -21,16 +16,3 @@ export class User {
         return this.password;
     }
 }
-
-
-
-export interface AuthResponseData{
-    kind : string,
-    idToken : string,
-    email : string,
-    refreshToken : string,
-    expiresIn : string,
-    localId : string,
-    registered? : Boolean
-  
-  }

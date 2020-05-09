@@ -28,9 +28,9 @@ export class LoginComponent implements OnInit {
     const email = this.loginForm.value.email;
     const password = this.loginForm.value.password;
     this.userService.onLogin(email , password).subscribe(ResponseData =>{
-      alert("successfully login");
-      this.isLoading = false;
-this.router.navigate(['/EmployeeDetails'])
+    alert("successfully login");
+    this.isLoading = false;
+    this.router.navigate(['/EmployeeDetails'])
     }, Error => {
       console.log(Error);
       this.error = "Error Occured";

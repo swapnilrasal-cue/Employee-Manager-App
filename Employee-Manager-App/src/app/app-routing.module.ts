@@ -7,19 +7,20 @@ import { EditEmployeeDetailsComponent } from './Employee-Details/edit-employee-d
 import { HeaderComponent } from './header/header.component';
 import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { AuthenticationGuard } from './Guards/authentication.guard';
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full'},
+  { path: '', redirectTo: '/EmployeeDetails', pathMatch: 'full'},
   {  path:'login' , component:LoginComponent },
-  {  path:'CreateNewUser' , component:CreateNewEmployeeComponent },
-  {  path:'EmployeeDetails' , component:EmployeeDetailsComponent ,
+  {  path:'CreateNewUser' , component:CreateNewEmployeeComponent , canActivate : [AuthenticationGuard]},
+  {  path:'EmployeeDetails' , component:EmployeeDetailsComponent , canActivate : [AuthenticationGuard],
      children : [
        { path : "EditEmployeeDetails" , component:EditEmployeeDetailsComponent}
      ]
   },
-  {  path:'EmployeeList' , component:EmployeeListComponent},
-  {  path:"header" , component:HeaderComponent},
+  {  path:'EmployeeList' , component:EmployeeListComponent ,canActivate : [AuthenticationGuard]},
+  {  path:"header" , component:HeaderComponent },
   {  path:"**" , component:PageNotFoundComponent}
 ];
 

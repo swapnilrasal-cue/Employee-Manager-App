@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators'
+import { User } from '../Models/user.model';
+import { EventEmitter } from 'protractor';
+import { UserService } from '../Services/user.service';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { FilterService } from '../Services/filter.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -9,11 +15,31 @@ import { map } from 'rxjs/operators'
 })
 export class EmployeeListComponent implements OnInit {
 
-   postsArray = [];
-  constructor(private http : HttpClient) { }
+  @Input() searchModel;
+
+  SeachModelChange = new BehaviorSubject<User>(null);
+
+
+   users : User[] = [];
+   filterStatus: string = '';
+   filterRole: string = '';
+
+  //  @Output() passTodoId = new EventEmitter<string>();
+
+
+   postsArray  = [];
+  constructor(private http : HttpClient,private userService : UserService,private router : Router,private filterService : FilterService) { }
   
   ngOnInit(): void {
     this.fetchUsers();
+  }
+
+  ngDoCheck() {
+    this.userService.usersChanged.subscribe((users: User[]) => {
+      this.users = users;
+    });
+      // this.postsArray = this.fetchUsers();
+    // this.users = this.users
   }
 
   private fetchUsers() {
@@ -23,16 +49,57 @@ export class EmployeeListComponent implements OnInit {
         map(responseData => {
           for (const key in responseData) {
             if (responseData.hasOwnProperty(key)) {
-              this.postsArray.push({ ...responseData[key], id: key });
+              this.users.push({ ...responseData[key], id: key });
             }
           }
-          return this.postsArray;
+          return this.users;
         })
       )
       .subscribe(posts => {
-        // ...
         console.log(posts);
       });
   }
+  
+  showAllTodos(){
+    // document.getElementById('filterByStatus').style.display = "none";
+    // document.getElementById('filterByRole').style.display = "none"; 
+    // document.getElementById('filterByDate').style.display = "none";
+    // document.getElementById('filterByStatus').nodeValue = null;
+    // document.getElementById('filterByRole').style.display = "none"; 
+    // document.getElementById('filterByDate').style.display = "none";
+    // this.router.navigate(['/EmployeeList']);
+  }
 
-}
+  showFurtherFilters() {
+    let filterType: any = document.getElementById('filterBy');
+    let filterName: any = filterType.options[filterType.selectedIndex].value;
+
+    if (filterName == "Status") {
+      this.setFilterValues("none", "inline-block", "none","none");
+    }
+  
+    else if (filterName == "Role") {
+      this.setFilterValues("inline-block", "none", "none","none");
+    }
+    // else if (filterName == "Date") {
+    //   this.setFilterValues("none", "none", "inline-block");
+    // }
+    else if (filterName == "Select") {
+      this.setFilterValues("none", "none", "none","none");
+    }
+  }
+
+  setFilterValues(role, status, date,select) {
+    document.getElementById('filterByRole').style.display = role;
+    document.getElementById('filterByStatus').style.display = status;
+    // document.getElementById('filterByDate').style.display = date;
+    document.getElementById('removeFilter').style.display = select;
+  }
+
+  textSearch(searchKey){
+    this.userService.textSearch(searchKey.value);
+  }
+   
+
+  }
+
